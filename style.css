@@ -81,8 +81,10 @@ span.material-symbols-rounded {
     margin: 0 3px;
     border-radius: 50%;
     background: var(--text-color);
+    /* 애니메이션 이름 정의 + 무한 반복 */
     animation: animateDots 1.5s var(--delay) infinite;
 }
+/* 애니메이션의 특정 지점에 대한 스타일 정의 */
 @keyframes animateDots {
     0%, 44% {
         transform: translateY(0px);
