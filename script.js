@@ -13,7 +13,22 @@ const createElement = (html, className) => {
     return chatDiv;  // Return the created chat div
 }
 
-// 화살표 함수정의
+const showTypingAnimation = () => {
+    const html = `<div class="chat-content">
+                    <div class="chat-details">
+                        <img src="images/chatbot.jpg" alt="chatbot-img">
+                        <div class="typing-animation">
+                            <div class="typing-dot" style="--delay: 0.2s"></div>
+                            <div class="typing-dot" style="--delay: 0.3s"></div>
+                            <div class="typing-dot" style="--delay: 0.4s"></div>
+                        </div>
+                    </div>
+                    <span class="material-symbols-rounded">content_copy</span>
+                </div>`;
+    // Create an incoming chat div with user's message and append it to chat container
+    const outgoingChatDiv = createElement(html, "incoming");
+    chatContainer.appendChild(outgoingChatDiv);
+}
 const handleOutgoingChat = () => {
     userText = charInput.value.trim(); // Get charInput value and remove extra spaces
     // console.log(userText);
@@ -27,6 +42,9 @@ const handleOutgoingChat = () => {
     // Create an outgoing chat div with user's message and append it to chat container
     const outgoingChatDiv = createElement(html, "outgoing");
     chatContainer.appendChild(outgoingChatDiv);
+    // 답변채팅 애니메이션 만들기 (incoming)
+    setTimeout(showTypingAnimation, 500);
+
 
 
 }
