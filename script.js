@@ -1,11 +1,13 @@
 // show message as an outgoing chat
-const charInput = document.querySelector("#chat-input");
+const chatInput = document.querySelector("#chat-input");
 const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
 const themeButton = document.querySelector("#theme-btn");
+const deleteButton = document.querySelector("#delete-btn");
 
 let userText = null;
 const API_KEY = "";
+const initialHeight = chatInput.scrollHeight;
 
 // 새로고침해도 localStorage의 data를 유지.
 const loadDataFromLocalstorage = () => {
@@ -14,7 +16,12 @@ const loadDataFromLocalstorage = () => {
     document.body.classList.toggle("light-mode", themeColor === "light_mode");
     themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
 
-    chatContainer.innerHTML = localStorage.getItem("all-chats");
+    // 화면이 비어있을 때 default Text 만들기
+    const defaultText = `<div class="default-text">
+                            <h1>ChatGPT</h1>
+                            <p>질문을 입력해보세요.</p>
+                        </div>`
+    chatContainer.innerHTML = localStorage.getItem("all-chats") || defaultText;
     // 채팅 컨테이너 맨 아래로 스크롤 for new chat
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
 
@@ -59,7 +66,8 @@ const getChatResponse = async (incomingChatDiv) => {
         const response = await (await fetch(API_URL, requestOptions)).json()
         pElement.textContent = response.choices[0].text.trim();
     } catch(error) {
-        console.log(error);
+        pElement.classList.add("error");
+        pElement.textContent = "무엇인가 오류가 발생했어요! 재시도 해주세요!"
     }
 
     incomingChatDiv.querySelector(".typing-animation").remove();
@@ -103,8 +111,12 @@ const showTypingAnimation = () => {
     getChatResponse(incomingChatDiv);
 }
 const handleOutgoingChat = () => {
-    userText = charInput.value.trim(); 
+    userText = chatInput.value.trim(); 
     if(!userText) return;
+
+    // 메시지를 보내면, textarea 초기화하기
+    chatInput.value = "";
+    chatInput.style.height = `${initialHeight}px`;
 
     // console.log(userText);
     // 보낸 채팅을 화면 메인에 보이기
@@ -117,6 +129,9 @@ const handleOutgoingChat = () => {
     // Create an outgoing chat div with user's message and append it to chat container
     const outgoingChatDiv = createElement(html, "outgoing");
     outgoingChatDiv.querySelector("p").textContent = userText; // textContent 와 innerHTML의 차이점 
+    
+    // 질문이 시작되면 default text를 없애기
+    document.querySelector(".default-text")?.remove();
     chatContainer.appendChild(outgoingChatDiv);
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
     // 답변채팅 애니메이션 만들기 (incoming)
@@ -128,5 +143,27 @@ themeButton.addEventListener("click", () => {
     // save the updated theme to the local storage(새로고침때마다 바뀌는 것 방지)
     localStorage.setItem("theme-color", themeButton.innerText);
     themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
-})
+});
+
+deleteButton.addEventListener("click", () => {
+    // local Storage의 chat 삭제 => 함수 다시 호출하기
+    if(confirm("정말 삭제하시겠습니까?")) {  // alert() 와 confirm()의 차이
+        localStorage.removeItem("all-chats");
+        loadDataFromLocalstorage();
+    }
+});
+
+chatInput.addEventListener("input", () => {
+    // 내용에 맞게 input field 높이 조정하기
+    chatInput.style.height = `${initialHeight}px`;
+    chatInput.style.height = `${chatInput.scrollHeight}px`;
+});
+
+chatInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
+        e.preventDefault();
+        handleOutgoingChat();
+    }
+});
+
 sendButton.addEventListener("click", handleOutgoingChat);
