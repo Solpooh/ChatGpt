@@ -74,7 +74,7 @@ body {
     color: var(--icon-color);
     visibility: hidden;
 }
-.chat:hover .chat-content span {
+.chat:hover .chat-content:not(:has(.typing-animation)) span {
     visibility: visible;
 }
 

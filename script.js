@@ -10,11 +10,11 @@ const API_KEY = "";
 // const API_KEY = process.env.API_KEY;
 
 const createElement = (html, className) => {
-    // Create new div and apply chat, specified class and set html content of div
+    // <div class="chat className">태그 만들기</div>
     const chatDiv = document.createElement("div");
     chatDiv.classList.add("chat", className);
     chatDiv.innerHTML = html;
-    return chatDiv;  // Return the created chat div
+    return chatDiv;
 }
 
 const getChatResponse = async (incomingChatDiv) => {
@@ -54,6 +54,16 @@ const getChatResponse = async (incomingChatDiv) => {
     incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
 }
 
+// 복사기능 만들기
+const copyResponse = (copyBtn) => {
+    // copy the text content of the response to the clipboard
+    const responseTextElement = copyBtn.parentElement.querySelector("p");
+    navigator.clipboard.writeText(responseTextElement.textContent);
+    copyBtn.textContent = "done";
+    setTimeout(() => copyBtn.textContent = "content_copy", 1000);
+
+
+}
 const showTypingAnimation = () => {
     const html = `<div class="chat-content">
                     <div class="chat-details">
@@ -64,7 +74,7 @@ const showTypingAnimation = () => {
                             <div class="typing-dot" style="--delay: 0.4s"></div>
                         </div>
                     </div>
-                    <span class="material-symbols-rounded">content_copy</span>
+                    <span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>
                 </div>`;
     // Create an incoming chat div with user's message and append it to chat container
     const incomingChatDiv = createElement(html, "incoming");
@@ -74,7 +84,7 @@ const showTypingAnimation = () => {
     getChatResponse(incomingChatDiv);
 }
 const handleOutgoingChat = () => {
-    userText = charInput.value.trim(); // Get charInput value and remove extra spaces
+    userText = charInput.value.trim(); 
     if(!userText) return;
 
     // console.log(userText);
@@ -87,7 +97,7 @@ const handleOutgoingChat = () => {
                 </div>`;
     // Create an outgoing chat div with user's message and append it to chat container
     const outgoingChatDiv = createElement(html, "outgoing");
-    outgoingChatDiv.querySelector("p").textContent = userText;
+    outgoingChatDiv.querySelector("p").textContent = userText; // textContent 와 innerHTML의 차이점 
     chatContainer.appendChild(outgoingChatDiv);
     // 답변채팅 애니메이션 만들기 (incoming)
     setTimeout(showTypingAnimation, 500);
