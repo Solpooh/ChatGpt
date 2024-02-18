@@ -5,9 +5,11 @@ const chatContainer = document.querySelector(".chat-container");
 
 let userText = null;
 const API_KEY = "";
-// require('dotenv').config(); // dotenv 모듈을 사용하여 환경 변수 로드
 
-// const API_KEY = process.env.API_KEY;
+const loadDataFromLocalstorage = () => {
+    chatContainer.innerHTML = localStorage.getItem("all-chats");
+}
+loadDataFromLocalstorage();
 
 const createElement = (html, className) => {
     // <div class="chat className">태그 만들기</div>
@@ -52,18 +54,22 @@ const getChatResponse = async (incomingChatDiv) => {
 
     incomingChatDiv.querySelector(".typing-animation").remove();
     incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+
+    // Saving all chat HTML data as all-chats name in the local storage
+    localStorage.setItem("all-chats", chatContainer.innerHTML);
 }
 
 // 복사기능 만들기
 const copyResponse = (copyBtn) => {
     // copy the text content of the response to the clipboard
-    const responseTextElement = copyBtn.parentElement.querySelector("p");
+    const responseTextElement = copyBtn.parentElement.querySelector("p"); // 복사 버튼의 부모요소에서 <p>요소를 찾아 저장
+    // navigator.clipboard = 브라우저 API의 일부, 클립보드에 접근가능 객체
     navigator.clipboard.writeText(responseTextElement.textContent);
-    copyBtn.textContent = "done";
+    copyBtn.textContent = "done"; // 복사 완료 시 "done"
+    // 1초 후에 다시 "content_copy" 로 변경
     setTimeout(() => copyBtn.textContent = "content_copy", 1000);
-
-
 }
+
 const showTypingAnimation = () => {
     const html = `<div class="chat-content">
                     <div class="chat-details">
