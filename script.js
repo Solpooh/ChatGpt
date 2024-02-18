@@ -2,12 +2,22 @@
 const charInput = document.querySelector("#chat-input");
 const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
+const themeButton = document.querySelector("#theme-btn");
 
 let userText = null;
 const API_KEY = "";
 
+// 새로고침해도 localStorage의 data를 유지.
 const loadDataFromLocalstorage = () => {
+    const themeColor = localStorage.getItem("theme-color");
+
+    document.body.classList.toggle("light-mode", themeColor === "light_mode");
+    themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
+
     chatContainer.innerHTML = localStorage.getItem("all-chats");
+    // 채팅 컨테이너 맨 아래로 스크롤 for new chat
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+
 }
 loadDataFromLocalstorage();
 
@@ -55,6 +65,8 @@ const getChatResponse = async (incomingChatDiv) => {
     incomingChatDiv.querySelector(".typing-animation").remove();
     incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
 
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+
     // Saving all chat HTML data as all-chats name in the local storage
     localStorage.setItem("all-chats", chatContainer.innerHTML);
 }
@@ -85,6 +97,7 @@ const showTypingAnimation = () => {
     // Create an incoming chat div with user's message and append it to chat container
     const incomingChatDiv = createElement(html, "incoming");
     chatContainer.appendChild(incomingChatDiv);
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
 
     // API 사용하기
     getChatResponse(incomingChatDiv);
@@ -105,10 +118,15 @@ const handleOutgoingChat = () => {
     const outgoingChatDiv = createElement(html, "outgoing");
     outgoingChatDiv.querySelector("p").textContent = userText; // textContent 와 innerHTML의 차이점 
     chatContainer.appendChild(outgoingChatDiv);
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
     // 답변채팅 애니메이션 만들기 (incoming)
     setTimeout(showTypingAnimation, 500);
-
-
-
 }
+themeButton.addEventListener("click", () => {
+    // Toggle body's class for the theme mode
+    document.body.classList.toggle("light-mode");
+    // save the updated theme to the local storage(새로고침때마다 바뀌는 것 방지)
+    localStorage.setItem("theme-color", themeButton.innerText);
+    themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
+})
 sendButton.addEventListener("click", handleOutgoingChat);
