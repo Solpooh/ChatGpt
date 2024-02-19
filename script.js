@@ -1,4 +1,3 @@
-// show message as an outgoing chat
 const chatInput = document.querySelector("#chat-input");
 const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
@@ -102,7 +101,6 @@ const showTypingAnimation = () => {
                     </div>
                     <span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>
                 </div>`;
-    // Create an incoming chat div with user's message and append it to chat container
     const incomingChatDiv = createElement(html, "incoming");
     chatContainer.appendChild(incomingChatDiv);
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
@@ -118,15 +116,13 @@ const handleOutgoingChat = () => {
     chatInput.value = "";
     chatInput.style.height = `${initialHeight}px`;
 
-    // console.log(userText);
     // 보낸 채팅을 화면 메인에 보이기
     const html = `<div class="chat-content">
                     <div class="chat-details">
-                        <img src="images/user.jpg" alt="user-img">
+                        <img src="images/ggobuk.jpg" alt="user-img">
                         <p></p>
                     </div>
                 </div>`;
-    // Create an outgoing chat div with user's message and append it to chat container
     const outgoingChatDiv = createElement(html, "outgoing");
     outgoingChatDiv.querySelector("p").textContent = userText; // textContent 와 innerHTML의 차이점 
     
