@@ -1,1 +1,1 @@
-chat gpt api by js
+chat gpt api by javaScript
